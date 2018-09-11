@@ -1,4 +1,3 @@
-pyinvestigate
 gglsbl
 virustotal-api
 shodan-python
