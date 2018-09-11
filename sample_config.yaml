@@ -1,0 +1,32 @@
+
+zip:
+    password: "infected"
+
+vtapi:
+    private: false
+    intelligence: false
+    public: true
+    apikey: 'VT_API_KEY'
+
+pyinvestigate:
+    apikey: 'PY_IVG_API_KEY'
+
+pymongo:
+    host: '127.0.0.1'
+    port: 27017
+
+malshare:
+    apikey: 'MALSHARE_API_KEY'
+
+hybridanalysis:
+    header: 'Falcon Sandbox'
+    apikey: 'HA_API_KEY'
+    secret: 'LEGACY_HA_API_KEY'
+
+virusshare:
+    user: 'VS_USERNAME'
+    password: 'VS_PASSWORD'
+
+googlesafebrowsing:
+    apikey: 'GGSB_API_KEY'
+    db_path: '/tmp/gsb_4.db'
