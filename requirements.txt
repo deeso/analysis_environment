@@ -1,6 +1,5 @@
 gglsbl
 virustotal-api
-shodan-python
 pymongo
 requests
 ipython
