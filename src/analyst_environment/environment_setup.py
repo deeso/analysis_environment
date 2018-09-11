@@ -12,6 +12,8 @@ from virus_total_apis import IntelApi, PublicApi, PrivateApi
 
 from .hybridanalysis import HybridAnalysis
 
+from .safebrowsing import SafeBrowsing
+
 # class reads a zip and extracts content in memory
 class ReadCompressed(object):
 
@@ -64,6 +66,8 @@ class GetInterface(object):
 
     HYBRID_ANALYSIS = 'hybridanalysis'
 
+    GOOGLE_SAFE_BROWSING = 'googlesafebrowsing'
+    DB_PATH = 'db_path'
 
     def __init__(self, config_file):
         self.my_config = yaml.load(open(config_file))
@@ -149,3 +153,14 @@ class GetInterface(object):
 
         apikey = config_dict.get(self.API_KEY)
         return HybridAnalysis(apikey)
+
+    def get_safebrowsing(self):
+        block = self.GOOGLE_SAFE_BROWSING
+        config_dict = self.my_config.get(block, None)
+        if config_dict is None:
+            raise Exception("Missing %s config" % block)
+
+        apikey = config_dict.get(self.API_KEY)
+        db_path = config_dict.get(self.DB_PATH)
+        return SafeBrowsing(apikey)
+        
