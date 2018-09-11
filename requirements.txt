@@ -1,0 +1,11 @@
+pyinvestigate
+gglsbl
+virustotal-api
+shodan-python
+pymongo
+requests
+ipython
+matplotlib
+scapy
+dpkt
+dnspython

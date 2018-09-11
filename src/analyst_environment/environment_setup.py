@@ -10,7 +10,7 @@ from . import malshare
 
 from virus_total_apis import IntelApi, PublicApi, PrivateApi
 
-from hybridanalysis import HybridAnalysis
+from .hybridanalysis import HybridAnalysis
 
 # class reads a zip and extracts content in memory
 class ReadCompressed(object):

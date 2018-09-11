@@ -69,7 +69,8 @@ class ReadPcap(object):
                pkts.append(pkt)
         return cls.plist(pkts)
 
-    def tcp_service(self, port, pkt_data):
+    @classmethod
+    def tcp_service(cls, port, pkt_data):
         pkt_data = cls.tcp_pkts(pkt_data)
         pkts = []
         for ts, pkt in pkt_data:
