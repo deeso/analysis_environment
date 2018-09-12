@@ -40,7 +40,10 @@ class VTPivots(object):
         c = self.mongo_client
         db = c[self.mongodb] if mongodb is None else c[mongodb]
         col = db[self.mongocol] if mongocol is None else db[mongocol]
-        col.insert_one(data)
+        try:
+            col.insert_one(data)
+        except:
+            pass
 
 
     def domain_lookups(self, domains):
