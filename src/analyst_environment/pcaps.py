@@ -56,6 +56,9 @@ class ReadPcap(object):
     def dns(self):
         return self.udp_service(53, self.pkt_data)
 
+    def smtp(self):
+        return self.tcp_service(25, self.pkt_data)
+
     @classmethod
     def service(cls, port, pkt_data):
         pkt_data = cls.transport_pkts(cls.pkt_data)
