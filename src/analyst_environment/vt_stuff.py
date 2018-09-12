@@ -137,19 +137,19 @@ class VTPivots(object):
 
 
         for d in potential_bad.values():
-            save_to_mongo(self, d, mongodb=mongodb, mongocol='potentially-bad')
+            self.save_to_mongo(self, d, mongodb=mongodb, mongocol='potentially-bad')
 
         return self.min_date, potential_bad_results
 
     def execute_ip_pivots(self, ip, mongodb='vt-ip-pivots'):
         ii = self.vt.get_ip_report(ip)
         iir = ii['results']
-        save_to_mongo(self, iir, mongodb=mongodb, mongocol='ip-lookup')
+        self.save_to_mongo(self, iir, mongodb=mongodb, mongocol='ip-lookup')
         resolutions = [i['hostname'] for i in iir.get('resolutions')] 
 
         accumulate_subs, subdomain_info = domain_lookups(vt, resolutions)
         for domain_info in subdomain_info.values():
-            save_to_mongo(self, domain_info, mongodb=mongodb, mongocol='domain-lookup')
+            self.save_to_mongo(self, domain_info, mongodb=mongodb, mongocol='domain-lookup')
 
 
         num_iters = self.num_iters
@@ -192,6 +192,6 @@ class VTPivots(object):
                     pass
                 d = {'domain':domain, 'bad_urls': baddies, 'ip': ip}
 
-                save_to_mongo(self, d, mongodb=mongodb, mongocol='potentially-bad')
+                self.save_to_mongo(self, d, mongodb=mongodb, mongocol='potentially-bad')
 
         return min_date, potential_bad
