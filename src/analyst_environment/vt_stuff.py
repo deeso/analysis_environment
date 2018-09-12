@@ -141,7 +141,7 @@ class VTPivots(object):
 
         return self.min_date, potential_bad_results
 
-    def execute_ip_pivots(self, mongodb='vt-ip-pivots'):
+    def execute_ip_pivots(self, ip, mongodb='vt-ip-pivots'):
         ii = self.vt.get_ip_report(ip)
         iir = ii['results']
         save_to_mongo(self, iir, mongodb=mongodb, mongocol='ip-lookup')
