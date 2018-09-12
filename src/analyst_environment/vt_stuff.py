@@ -25,14 +25,27 @@ class VTPivots(object):
             self.vt = get_interface.get_private_vt()
 
         self.ivg = get_interface.get_ivg()
-
+        self.update_date(base_date=base_date, min_days=min_days)
         self.mongo_client = get_interface.get_mongo_connection()
         self.min_hits = min_hits
-        self.min_days = min_days
         self.base_date = base_date
         self.min_date = self.base_date - timedelta(days=self.min_days)
         self.mongodb = mongodb
         self.mongocol = mongocol
+
+    def update_date(self, base_date=None, min_days=None):
+        if isinstance(base_date, str):
+            base_date = datetime.strptime(base_date, DFMT)
+
+        if not base_date is None:
+            self.base_date = base_date
+
+        if not min_days is None:
+            self.min_days = min_days
+
+        self.min_date = self.base_date - timedelta(days=self.min_days)
+        return self.min_date
+
 
     def save_to_mongo(self, data, mongodb=None, mongocol=None):
         if self.mongo_client is None:
