@@ -67,6 +67,7 @@ class VTPivots(object):
         subdomain_info = {}
         accumulate_subs = set()
         for domain in domains:
+            print ("Looking up %s in VirusTotal"%domain)
             di = self.vt.get_domain_report(domain)
             r = di.get('results', {})
             accumulate_subs = set(r.get('subdomains', []))
