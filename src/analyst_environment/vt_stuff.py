@@ -25,6 +25,7 @@ class VTPivots(object):
             self.vt = get_interface.get_private_vt()
 
         self.max_domain_pivots = max_domain_pivots
+        self.num_iters = num_iters
         self.ivg = get_interface.get_ivg()
         self.update_date(base_date=base_date, min_days=min_days)
         self.mongo_client = get_interface.get_mongo_connection()
@@ -66,7 +67,11 @@ class VTPivots(object):
 
         subdomain_info = {}
         accumulate_subs = set()
+        completed = 0
         for domain in domains:
+            if completed >= self.max_domain_pivots:
+                break
+            completed += 1
             print ("Looking up %s in VirusTotal"%domain)
             di = self.vt.get_domain_report(domain)
             r = di.get('results', {})
@@ -94,17 +99,17 @@ class VTPivots(object):
 
         return len(results) > 0, results
 
-    def accumulate_domains(self, accumulate_subs, subdomain_info, max_domain_pivots=100):
+    def accumulate_domains(self, accumulate_subs, subdomain_info):
         subdomains = accumulate_subs
         completed = 0
         for s in subdomains:
             if s in subdomain_info:
                 continue
-            if not max_domain_pivots is None and completed >= max_domain_pivots:
+            if completed >= self.max_domain_pivots:
                 break
+            completed += 1
             print ("Acquiring report for subdomain: %s" % s)
             r = self.vt.get_domain_report(s)
-            completed += 1
             if not 'results' in r:
                 subdomain_info[s] = None
                 continue
@@ -148,7 +153,10 @@ class VTPivots(object):
 
         return self.min_date, potential_bad_results
 
-    def execute_ip_pivots(self, ip, mongodb='vt-ip-pivots'):
+    def execute_ip_pivots(self, ip, mongodb='vt-ip-pivots', pivot_on_domains=False, max_domain_pivots=None):
+        if not max_domain_pivots is None:
+            self.max_domain_pivots = max_domain_pivots
+
         ii = self.vt.get_ip_report(ip)
         iir = ii['results']
         self.save_to_mongo(iir, mongodb=mongodb, mongocol='ip-lookup')
@@ -162,13 +170,14 @@ class VTPivots(object):
         num_iters = self.num_iters
         exit_accumulation = False
         last_len = len(accumulate_subs)
-        while not exit_accumulation:
-            accumulate_subs, subdomain_info = self.accumulate_domains(accumulate_subs, subdomain_info, max_domains=self.max_domain_pivots)
-            if num_iters <= 0 or (len(accumulate_subs) - last_len) < self.min_new_doms:
-                exit_accumulation = True
-            else:
-                last_len = len(accumulate_subs)
-            num_iters += -1
+        if pivot_on_domains:
+            while not exit_accumulation:
+                accumulate_subs, subdomain_info = self.accumulate_domains(accumulate_subs, subdomain_info)
+                if num_iters <= 0 or (len(accumulate_subs) - last_len) < self.min_new_doms:
+                    exit_accumulation = True
+                else:
+                    last_len = len(accumulate_subs)
+                num_iters += -1
 
         potential_bad = {}
         bad, results = self.extract_potential_bad(iir)
