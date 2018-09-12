@@ -18,12 +18,13 @@ class VTPivots(object):
                  min_hits=MIN_HITS, mongodb='vt-default-db', 
                  mongocol='domain-lookup', base_date=BASE_DATE, 
                  use_public=True, num_iters=NUM_ITERS, 
-                 min_new_doms=MIN_NEW_DOMS):
+                 min_new_doms=MIN_NEW_DOMS, max_domain_pivots=100):
 
         self.vt = get_interface.get_public_vt()
         if not use_public:
             self.vt = get_interface.get_private_vt()
 
+        self.max_domain_pivots = max_domain_pivots
         self.ivg = get_interface.get_ivg()
         self.update_date(base_date=base_date, min_days=min_days)
         self.mongo_client = get_interface.get_mongo_connection()
@@ -92,13 +93,18 @@ class VTPivots(object):
 
         return len(results) > 0, results
 
-    def accumulate_domains(self, accumulate_subs, subdomain_info):
+    def accumulate_domains(self, accumulate_subs, subdomain_info, max_domain_pivots=100):
         subdomains = accumulate_subs
+        completed = 0
         for s in subdomains:
             if s in subdomain_info:
                 continue
+            if not max_domain_pivots is None and completed >= max_domain_pivots:
+                break
+            print ("Acquiring report for subdomain: %s" % s)
             r = self.vt.get_domain_report(s)
-            if 'results' not in r:
+            completed += 1
+            if not 'results' in r:
                 subdomain_info[s] = None
                 continue
             results = r['results']
@@ -156,7 +162,7 @@ class VTPivots(object):
         exit_accumulation = False
         last_len = len(accumulate_subs)
         while not exit_accumulation:
-            accumulate_subs, subdomain_info = self.accumulate_domains(accumulate_subs, subdomain_info)
+            accumulate_subs, subdomain_info = self.accumulate_domains(accumulate_subs, subdomain_info, max_domains=self.max_domain_pivots)
             if num_iters <= 0 or (len(accumulate_subs) - last_len) < self.min_new_doms:
                 exit_accumulation = True
             else:
