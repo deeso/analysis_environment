@@ -39,11 +39,14 @@ class VTPivots(object):
             return
         c = self.mongo_client
         db = c[self.mongodb] if mongodb is None else c[mongodb]
-        col = db[self.mongocol] if mongocol is None else c[mongocol]
+        col = db[self.mongocol] if mongocol is None else db[mongocol]
         col.insert_one(data)
 
 
     def domain_lookups(self, domains):
+        if isinstance(domains, str):
+            domains = [domains,]
+
         subdomain_info = {}
         accumulate_subs = set()
         for domain in domains:
@@ -86,17 +89,6 @@ class VTPivots(object):
             subdomain_info[s] = results
             accumulate_subs |= set(results.get('domain_siblings', []))
             accumulate_subs |= set(results.get('subdomains', []))
-        return accumulate_subs, subdomain_info
-
-    def domain_lookups(self, domains):
-        subdomain_info = {}
-        accumulate_subs = set()
-        for domain in domains:
-            di = self.vt.get_domain_report(domain)
-            r = di.get('results', {})
-            accumulate_subs = set(r.get('subdomains', []))
-            subdomain_info[domain] = r
-
         return accumulate_subs, subdomain_info
 
     def execute_domain_pivots(self, domains, mongodb='vt-domain-infos'):    
