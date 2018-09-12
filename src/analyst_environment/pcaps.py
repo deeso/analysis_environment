@@ -191,3 +191,17 @@ class MapDnsNames(object):
                 'ip_to_name': in_to_a,
                 'name_to_ip': a_to_in,
                 'cnames': cnames}
+
+    @classmethod
+    def get_resolutions(cls, resolutions):
+        results = []
+        resolved_names = lambda n, ips: ['%s ==> %s' % (n, ip) for ip in ips]
+        for name, ips in resolutions.items(): 
+            results = results + resolved_names(name, ips)
+        return results
+
+    @classmethod
+    def print_resolutions(cls, resolutions):
+        print ("Unanswered resolutions:\n%s"%('\n'.join(resolutions['unanswered'])))
+        print ("Resolved hostnames:\n%s"%('\n'.join(get_resolutions(resolutions['ip_to_name']))))
+        print ("Resolved CNAMES:\n%s"%('\n'.join(get_resolutions(resolutions['cnames']))))
