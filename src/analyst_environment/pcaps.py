@@ -206,5 +206,5 @@ class MapDnsNames(object):
     @classmethod
     def print_resolutions(cls, resolutions):
         print ("Unanswered resolutions:\n%s"%('\n'.join(resolutions['unanswered'])))
-        print ("Resolved hostnames:\n%s"%('\n'.join(get_resolutions(resolutions['ip_to_name']))))
-        print ("Resolved CNAMES:\n%s"%('\n'.join(get_resolutions(resolutions['cnames']))))
+        print ("Resolved hostnames:\n%s"%('\n'.join(cls.get_resolutions(resolutions['ip_to_name']))))
+        print ("Resolved CNAMES:\n%s"%('\n'.join(cls.get_resolutions(resolutions['cnames']))))
