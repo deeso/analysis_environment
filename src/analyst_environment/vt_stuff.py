@@ -147,7 +147,7 @@ class VTPivots(object):
         self.save_to_mongo(iir, mongodb=mongodb, mongocol='ip-lookup')
         resolutions = [i['hostname'] for i in iir.get('resolutions')] 
 
-        accumulate_subs, subdomain_info = domain_lookups(vt, resolutions)
+        accumulate_subs, subdomain_info = self.domain_lookups(resolutions)
         for domain_info in subdomain_info.values():
             self.save_to_mongo(domain_info, mongodb=mongodb, mongocol='domain-lookup')
 
