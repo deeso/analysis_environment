@@ -67,7 +67,7 @@ class VTPivots(object):
 
         for dtu in dtus:
             hits = dtu.get('positives', 0)
-            if hits <= min_class:
+            if hits <= self.min_hits:
                 continue
             scan_date = dtu.get('scan_date', None)
             if scan_date is None:
